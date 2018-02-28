@@ -1,3 +1,3 @@
-"standalone exes/matplotlib/*" linguist-vendored
-"standalone exes/mpl-data/*" linguist-vendored
-"standalone exes/tcl/*" linguist-vendored
+"standalone exes/matplotlib/*" linguist-vendored=true
+"standalone exes/mpl-data/*" linguist-vendored=true
+"standalone exes/tcl/*" linguist-vendored=true
