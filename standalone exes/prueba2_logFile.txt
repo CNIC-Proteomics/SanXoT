@@ -1,0 +1,8 @@
+LOG FILE
+LogMasher v0.00
+Start: 2018-02-01 15:24:51
+
+Output log file: D:prueba2_logFile.txt
+Search string: D:\DATUMARO\tra*\tar*\2018\*\*"
+
+Everything went fine.

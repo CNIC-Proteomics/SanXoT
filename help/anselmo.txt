@@ -1,0 +1,41 @@
+
+Anselmo v0.04 is a program made in the Jesus Vazquez Cardiovascular Proteomics
+Lab at Centro Nacional de Investigaciones Cardiovasculares, used to identify
+the integration which holds the median variance from a set of randomised
+SanXoT integrations (i.e., integrations performed using SanXoT's parametre -R).
+
+Anselmo needs at least:
+
+1) the prefix (by using the -f argument) of the set of experiments, i.e. when
+the info files of the randomisations are such as:
+
+    heartExperiment1_infoFile.txt
+    heartExperiment2_infoFile.txt
+    ...
+    heartExperimentZ_infoFile.txt
+
+the prefix is considered to be "heartExperiment".
+
+2) the folder where all those info files are (they must be in the same folder),
+using the -p argument.
+
+After reading the variances in the set of info files, Anselmo identifies the
+info file containing the median of the set of variances, and then it renames
+the files using its prefix, i.e. using the previous example, and assuming the
+median of the variance is in experiment labelled "9", then it copies the files
+
+    heartExperiment9_infoFile.txt
+    heartExperiment9_higherLevel.txt
+    heartExperiment9_outStats.txt
+    ...
+
+into
+
+    med_heartExperiment_infoFile.txt
+    med_heartExperiment_higherLevel.txt
+    med_heartExperiment_outStats.txt
+    ...
+     
+Usage: anselmo.py -p[folder] -fyeast_nullHypothesis [OPTIONS]
+
+Use -H or --advanced-help for more details.

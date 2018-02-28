@@ -1,0 +1,8 @@
+LOG FILE
+LogMasher v0.00
+Start: 2018-02-01 15:19:06
+
+Output log file: D:pruebaa_logFile.txt
+Search string: D:\DATUMARO\trabajo\tareas?realizadas\2018\*\*"
+
+Everything went fine.
