@@ -1,3 +1,4 @@
 "standalone exes/matplotlib/*" linguist-detectable=false
 "standalone exes/mpl-data/*" linguist-detectable=false
 "standalone exes/tcl/*" linguist-detectable=false
+*.tcl linguist-detectable=false
