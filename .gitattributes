@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+standalone exes/matplotlib/* linguist-vendored
+standalone exes/mpl-data/* linguist-vendored
+standalone exes/tcl/* linguist-vendored
