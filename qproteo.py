@@ -93,33 +93,33 @@ def qproteo(indata, cfgfile):
     w = wf.builder(outdir, logger)
 
     # SCAN TO PEPTIDE -----------------------------------
-    # logger.info("scan to peptide")
-    # w.scan2peptide({
-    #     "-x": idqfile,
-    #     "-d": scanfile,
-    #     "-r": "s2p_rels.xls",
-    #     "-f": fdr,
-    #     "-o": pepfile
-    # }, optparams)
+    logger.info("scan to peptide")
+    w.scan2peptide({
+        "-x": idqfile,
+        "-d": scanfile,
+        "-r": "s2p_rels.xls",
+        "-f": fdr,
+        "-o": pepfile
+    }, optparams)
 
     # PEPTIDE TO PROTEIN -----------------------------------
-    # logger.info("peptide to protein")
-    # w.peptide2protein({
-    #     "-x": idqfile,
-    #     "-d": pepfile,
-    #     "-r": "p2q_rels.xls",
-    #     "-f": fdr,
-    #     "-o": profile
-    # }, optparams)    
+    logger.info("peptide to protein")
+    w.peptide2protein({
+        "-x": idqfile,
+        "-d": pepfile,
+        "-r": "p2q_rels.xls",
+        "-f": fdr,
+        "-o": profile
+    }, optparams)    
 
     # PROTEIN TO CATEGORY -----------------------------------
-    logger.info("protein to category")
-    w.protein2category({
-        "-d": profile,
-        "-r": "S:\U_Proteomica\UNIDAD\DatosCrudos\Lopez-Otin\_PHOSPHOPROT\Scripts\MOUSE_IPA_DAVID_CORUM_relations_file.txt", # HAVE TO BE THE CATEGORY DATABASE!!!!
-        "-f": fdr,
-        "-o": catfile
-    }, optparams)
+    # logger.info("protein to category")
+    # w.protein2category({
+    #     "-d": profile,
+    #     "-r": "S:\U_Proteomica\UNIDAD\DatosCrudos\Lopez-Otin\_PHOSPHOPROT\Scripts\MOUSE_IPA_DAVID_CORUM_relations_file.txt", # HAVE TO BE THE CATEGORY DATABASE!!!!
+    #     "-f": fdr,
+    #     "-o": catfile
+    # }, optparams)
 
     # PEPTIDE TO ALL -----------------------------------
     # logger.info("peptide to all")
