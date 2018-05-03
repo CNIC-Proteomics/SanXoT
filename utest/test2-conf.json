@@ -1,0 +1,57 @@
+{
+    "scan2peptide": {
+        "aljamia1": {
+            "-i": "[Raw_FirstScan]-[Charge]",
+            "-j": "[Xs_-TAG-_-CONTROLTAG-]",
+            "-k": "[Vs_-TAG-_-CONTROLTAG-]",
+            "-f": "!([FASTAProteinDescription]~~TRYP_PIG||[FASTAProteinDescription]~~Krt||[FASTAProteinDescription]~~KRT)"
+        },
+        "aljamia2": {
+            "-i": "[Sequence]",
+            "-j": "[Raw_FirstScan]-[Charge]"
+        },
+        "klibrate1": {
+            "-g": "",
+            "-f": ""
+        },        
+        "sanxot1": {
+            "-g": "",
+            "-b": "",
+            "-s": ""
+        },
+        "sanxot2": {
+            "--tags": "!out",
+            "-f": "",
+            "-g": ""
+        }
+    },
+    "peptide2protein": {
+        "aljamia1": {
+             "-i": "[FASTAProteinDescription]",
+             "-j": "[Sequence]"
+         },
+         "sanxot1": {
+             "-g": "",
+             "-b": "",
+             "-s": ""
+         },
+         "sanxot2": {
+             "--tags": "!out",
+             "-f": "",
+             "-g": ""
+         }
+     },
+     "protein2category": {
+        "sanxot1": {
+            "-g": "",
+            "-b": "",
+            "-s": ""
+        },
+        "sanxot2": {
+            "--tags": "!out",
+            "-f": "",
+            "-g": ""
+        }
+    }
+     
+}

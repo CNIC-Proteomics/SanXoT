@@ -1,0 +1,52 @@
+{
+    "scan2peptide": {
+        "aljamia1": {
+            "-i": "[Raw_FirstScan]-[Charge]",
+            "-j": "[Xs_-TAG-_-CONTROLTAG-]",
+            "-k": "[Vs_-TAG-_-CONTROLTAG-]",
+            "-f": "[Modified]==TRUE",
+            "-l": "PTM",
+            "-R": "1"
+        },
+        "aljamia2": {
+            "-i": "[Sequence]",
+            "-j": "[Raw_FirstScan]-[Charge]",
+            "-k": "PTM",
+            "-f": "[Modified]==TRUE",
+            "-R": "1"
+        },
+        "klibrate1": {
+            "-g": "",
+            "-f": ""
+        },        
+        "sanxot1": {
+            "-g": "",
+            "-b": "",
+            "-s": ""
+        },
+        "sanxot2": {
+            "--tags": "!out",
+            "-f": "",
+            "-g": ""
+        }
+    },
+    "peptide2protein": {
+        "aljamia1": {
+             "-i": "[FASTAProteinDescription]",
+             "-j": "[Sequence]",
+             "-k": "PTM",
+             "-f": "[Modified]==TRUE",
+             "-R": "1"
+         },
+         "sanxot1": {
+             "-g": "",
+             "-b": "",
+             "-s": ""
+         },
+         "sanxot2": {
+             "--tags": "!out",
+             "-f": "",
+             "-g": ""
+         }
+     }    
+}
