@@ -119,3 +119,4 @@ if __name__ == "__main__":
     # start main function
     logging.info('start script: '+"{0}".format(" ".join([x for x in sys.argv])))
     main(args)
+    logging.info('end script')
