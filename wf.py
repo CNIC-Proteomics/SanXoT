@@ -54,14 +54,18 @@ class builder:
         '''
         Convert the dictionary to list
         '''
+        # init with temporal directory
+        dlist = []
+        if self.tmpdir:
+            dlist.append("-p")
+            dlist.append(self.tmpdir)
         # join dict with requried and optional parameters        
         params = r.copy()
         if o is not None:
-            params.update(o)
-        # init with temporal dictory
-        dlist = []
-        dlist.append("-p")
-        dlist.append(self.tmpdir)
+            if type(o) is dict:
+                params.update(o)
+            elif type(o) is str:
+                dlist.extend( o.split() )
         # create parameter list
         for key, value in params.iteritems():
             dlist.append( str(key) )
@@ -99,7 +103,8 @@ class builder:
         params = self._convert_dict_list(iparams, optparams)
         self.logger.debug( "execute aljamia: "+ " ".join(params) )
         try:
-            aljamia.main( params )
+            with capturing() as outlog:
+                aljamia.main( params )
         except:
             self._print_exception(2, "Exception occured: executing aljamia")
 
@@ -110,7 +115,8 @@ class builder:
         params = self._convert_dict_list(iparams, optparams)
         self.logger.debug( "execute klibrate: "+ " ".join(params) )
         try:
-            klibrate.main( params )
+            with capturing() as outlog:
+                klibrate.main( params )
         except:
             self._print_exception(2, "Exception occured: executing klibrate")
 
@@ -121,10 +127,8 @@ class builder:
         params = self._convert_dict_list(iparams, optparams)
         self.logger.debug( "execute sanxot: "+ " ".join(params) )
         try:
-            # with capturing() as outlog:
-            #     sanxot.main( params )
-            # self.logger.debug( outlog )
-            sanxot.main( params )
+            with capturing() as outlog:
+                sanxot.main( params )
         except:
             self._print_exception(2, "Exception occured: executing sanxot")
 
@@ -135,7 +139,8 @@ class builder:
         params = self._convert_dict_list(iparams, optparams)
         self.logger.debug( "execute sanxotsieve: "+ " ".join(params) )
         try:
-            sanxotsieve.main( params )
+            with capturing() as outlog:
+                sanxotsieve.main( params )
         except:
             self._print_exception(2, "Exception occured: executing sanxotsieve")
 
