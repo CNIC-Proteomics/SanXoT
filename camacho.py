@@ -16,9 +16,9 @@ def easterEgg():
 	print u"""
 Estando, pues, asidos de las manos Basilio y Quiteria, el cura, tierno y
 lloroso, los echó la bendición y pidió al cielo diese buen poso al alma del
-nuevo desposado; el cual, así como recibió la bendición, con presta
-ligereza se levantó en pie, y con no vista desenvoltura se sacó el estoque,
-a quien servía de vaina su cuerpo.
+nuevo desposado; el cual, así como recibió la bendición, con presta ligereza se
+levantó en pie, y con no vista desenvoltura se sacó el estoque, a quien servía
+y de vaina su cuerpo.
 Quedaron todos los circunstantes admirados, y algunos dellos, más simples
 que curiosos, en altas voces, comenzaron a decir:
 -¡Milagro, milagro!
@@ -121,7 +121,7 @@ def main(options, programName, programVersion):
 	previousList = []
 	
 	# default extensions
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	
 	# default file names	
@@ -258,7 +258,7 @@ def main(options, programName, programVersion):
 if __name__ == "__main__":
     
 	programName = "Camacho"
-	programVersion = "v0.01"
+	programVersion = "v0.03"
 
 	# make sure it makes sense within the sentence "used to ..."
 	programUse = "take a table including proteins and categories (mainly from DAVID), and organise them as relations file ready to be used in the Systems Biology Triangle"

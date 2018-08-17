@@ -337,7 +337,7 @@ def createLinks(linkList = None):
 
 def main(argv):
 
-	version = "v1.05"
+	version = "v1.06"
 	verbose = False
 	showGraph = True
 	showLegend = True
@@ -351,14 +351,14 @@ def main(argv):
 	bigListFile = ""
 	defaultStatsFile = "stats"
 	defaultRelationsFile = "rels"
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	defaultGVFileExtension = ".gv"
 	relationsFile = ""
 	listOfCategoriesFile = ""
 	# output files
 	defaultListOfCategoriesFile = "ulst"
-	defaultBigListFile = "table_allPaths.xls"
+	defaultBigListFile = "table_allPaths.tsv"
 	defaultOutputFile = "outNodes"
 	defaultOutputGraphFile = "outTree"
 	defaultLogFile = "logFile"

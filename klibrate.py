@@ -1,4 +1,5 @@
-﻿import pdb
+﻿from __future__ import division
+import pdb
 import sys
 import getopt
 import stats
@@ -601,15 +602,15 @@ examples:
 
 * To calculate the variance and k starting with a seed v = 0.03 and k = 40, printing the steps of the Levenberg-Marquardt algorithm and results, showing the rank(Vs) vs 1 / MSD graph afterwards:
 
-klibrate.py -gbs -v0.03 -k40 -dC:\\temp\\originalDataFile.txt -rC:\\temp\\relationsFile.txt -oC:\\temp\\calibratedWeights.xls
+klibrate.py -gbs -v0.03 -k40 -dC:\\temp\\originalDataFile.txt -rC:\\temp\\relationsFile.txt -oC:\\temp\\calibratedWeights.tsv
 
 * To get fast results of an integration forcing a variance = 0.02922 and a k = 35.28:
 
-klibrate.py -f -v0.02922 -k35.28 -dC:\\temp\\originalDataFile.txt -rC:\\temp\\relationsFile.txt -oC:\\temp\\calibratedWeights.xls
+klibrate.py -f -v0.02922 -k35.28 -dC:\\temp\\originalDataFile.txt -rC:\\temp\\relationsFile.txt -oC:\\temp\\calibratedWeights.tsv
 
 * To see the graph resulting from a calculation with variance = 0.02922 and a k = 35.28:
 
-klibrate.py -gf -v0.02922 -k35.28 -dC:\\temp\\originalDataFile.txt -rC:\\temp\\relationsFile.txt -oC:\\temp\\calibratedWeights.xls
+klibrate.py -gf -v0.02922 -k35.28 -dC:\\temp\\originalDataFile.txt -rC:\\temp\\relationsFile.txt -oC:\\temp\\calibratedWeights.tsv
 """ % version
 
 	return
@@ -618,7 +619,7 @@ klibrate.py -gf -v0.02922 -k35.28 -dC:\\temp\\originalDataFile.txt -rC:\\temp\\r
 
 def main(argv):
 	
-	version = "v1.16"
+	version = "v1.18"
 	verbose = True
 	showGraph = True
 	graphDPI = 100 # default of Matplotlib's savefig method
@@ -653,7 +654,7 @@ def main(argv):
 	defaultOutputGraphVValue = "outGraph_VValue"
 	defaultGraphDataFile = "outGraph_Data"
 	defaultOutputCalibrated = "calibrated"
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	defaultGraphExtension = ".png"
 	

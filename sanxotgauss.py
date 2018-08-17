@@ -134,7 +134,7 @@ Usage: sanxotgauss.py -z[stats file] -r[relations file] -c[higher level list fil
 
 def main(argv):
 
-	version = "v0.22"
+	version = "v0.23"
 	verbose = False
 	showGraph = True
 	graphLimits = 6.0
@@ -149,7 +149,7 @@ def main(argv):
 	inStats = ""
 	defaultStatsFile = "stats"
 	defaultRelationsFile = "rels"
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	defaultGraphExtension = ".png"
 	relationsFile = ""

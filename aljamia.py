@@ -1,4 +1,5 @@
-﻿import pdb
+﻿from __future__ import division
+import pdb
 import sys
 import getopt
 import os
@@ -126,16 +127,23 @@ def fulfilsCondition(firstPart, condition, secondPart, useNumbers = False):
 	
 #------------------------------------------------------
 
-def findEndParenth(filter, startParenth = 0):
+def findEndParenth(filter, startParenth = 0, curlyBrackets = False):
 
+	openBracket = "("
+	closeBracket = ")"
+	
+	if curlyBrackets:
+		openBracket = "{"
+		closeBracket = "}"
+	
 	position = startParenth + 1
 	openedParenth = 1
 	while position < len(filter):
 
-		if filter[position] == "(":
+		if filter[position] == openBracket:
 			openedParenth += 1
 		
-		if filter[position] == ")":
+		if filter[position] == closeBracket:
 			if openedParenth == 1:
 				return position
 			
@@ -148,16 +156,27 @@ def findEndParenth(filter, startParenth = 0):
 	
 #------------------------------------------------------
 
-def checkFilter(filter, isXML = True, columns = None, currentRow = [], headers = [], useNumbers = False):
+def checkFilter(filter, isXML = True, columns = None, currentRow = [], headers = [], useNumbers = False, logicOperatorsAsWords = False, curlyBrackets = False):
 	
 	andSymbol = "&&"
 	orSymbol = "||"
+	openBracket = "("
+	closeBracket = ")"
+	
+	if logicOperatorsAsWords:
+		andSymbol = "*and*"
+		orSymbol = "*or*"
+		
+	if curlyBrackets:
+		openBracket = "{"
+		closeBracket = "}"
+	
 	filterOk = True
 	
-	while "(" in filter and ")" in filter:
-		startParenth = filter.index("(")
+	while openBracket in filter and closeBracket in filter:
+		startParenth = filter.index(openBracket)
 		
-		endParenth = findEndParenth(filter, startParenth)
+		endParenth = findEndParenth(filter, startParenth, curlyBrackets = curlyBrackets)
 		if endParenth < startParenth:
 			print "\nError, please check that all brackets are properly formed.\n"
 			sys.exit(2)
@@ -171,7 +190,9 @@ def checkFilter(filter, isXML = True, columns = None, currentRow = [], headers =
 								columns = columns,
 								currentRow = currentRow,
 								headers = headers,
-								useNumbers = useNumbers)
+								useNumbers = useNumbers,
+								logicOperatorsAsWords = logicOperatorsAsWords,
+								curlyBrackets = curlyBrackets)
 		
 		filter = "%s%s%s" % (preFilter, str(subFilterResult), postFilter)
 	
@@ -185,14 +206,18 @@ def checkFilter(filter, isXML = True, columns = None, currentRow = [], headers =
 								columns = columns,
 								currentRow = currentRow,
 								headers = headers,
-								useNumbers = useNumbers)
+								useNumbers = useNumbers,
+								logicOperatorsAsWords = logicOperatorsAsWords,
+								curlyBrackets = curlyBrackets)
 		
 		lastOk = checkFilter(lastPart,
 								isXML = isXML,
 								columns = columns,
 								currentRow = currentRow,
 								headers = headers,
-								useNumbers = useNumbers)
+								useNumbers = useNumbers,
+								logicOperatorsAsWords = logicOperatorsAsWords,
+								curlyBrackets = curlyBrackets)
 								
 		filterOk = lastOk and firstOk
 		filter = str(filterOk)
@@ -207,14 +232,17 @@ def checkFilter(filter, isXML = True, columns = None, currentRow = [], headers =
 								columns = columns,
 								currentRow = currentRow,
 								headers = headers,
-								useNumbers = useNumbers)
+								useNumbers = useNumbers,
+								logicOperatorsAsWords = logicOperatorsAsWords,
+								curlyBrackets = curlyBrackets)
 		
 		lastOk = checkFilter(lastPart,
 								isXML = isXML,
 								columns = columns,
 								currentRow = currentRow,
 								headers = headers,
-								useNumbers = useNumbers)
+								useNumbers = useNumbers,
+								logicOperatorsAsWords = logicOperatorsAsWords)
 								
 		filterOk = lastOk or firstOk
 		filter = str(filterOk)
@@ -226,7 +254,9 @@ def checkFilter(filter, isXML = True, columns = None, currentRow = [], headers =
 								columns = columns,
 								currentRow = currentRow,
 								headers = headers,
-								useNumbers = useNumbers)
+								useNumbers = useNumbers,
+								logicOperatorsAsWords = logicOperatorsAsWords,
+								curlyBrackets = curlyBrackets)
 		filter = str(filterOk)
 	
 	if isXML:
@@ -382,6 +412,10 @@ Usage: aljamia.py -x[xml file] -i[fold field] [-j[weight field] -k[id string], .
                            -i"[Scan]-[Charge]" -j"[Scan]-[Charge]" -A"i"
                        Will return "887" and "900-3" i- and j-fields,
                        respectively. By default, no operations are allowed.
+   -c, --curly-brackets
+                       To use curly brackets, {}, instead of the default
+                       parentheses, (), when using the filters (see options -f
+                       and -F).
    -d, --allow-duplicates
                        To avoid removal of duplicated relations.
    -f, --filter=string To filter data to import. Use as in these examples:
@@ -406,6 +440,13 @@ Usage: aljamia.py -x[xml file] -i[fold field] [-j[weight field] -k[id string], .
                                 Sequence must contain "C" and (via "&&") "M"
                        
                        Note that the filter is case sensitive.
+                       Warning: when using parentheses () generate conflicts
+                       in the commandline, the option -c can be used to switch
+                       to curly-brackets {} mode.
+                       Warning: when using && or || as logical operators
+                       generate conflicts in the commandline, the option -w can
+                       be used to switch to word operators such as *and* or
+                       *or*.
                        Warning: using this argument, the filter is seen as
                        text-only, which means that [Mass] > 3 will not include
                        Mass = 10, as in ASCII order "3" comes after "1". For
@@ -422,7 +463,7 @@ Usage: aljamia.py -x[xml file] -i[fold field] [-j[weight field] -k[id string], .
                        text-only conditions ~~ or !~ are used), the concerning
                        operation will be treated as text in all cases.
                        
-   -i, --id1=string    Identifier for the first column. XML tags must be in
+   -i, --c1=string    Identifier for the first column. XML tags must be in
                        square brackets, while the rest of the text will be kept
                        unaltered. Here are some examples using tags such as
                        "FirstScan", "Charge", "Mass" or "Sequence" or "PTM":
@@ -435,9 +476,10 @@ Usage: aljamia.py -x[xml file] -i[fold field] [-j[weight field] -k[id string], .
                        
                        Note that tags are case-sensitive.
                        
-   -j, --id2=string    Identifier for the second column (see -i).
-   -k, --id3=string    Identifier for the third column (see -i).
-   -l, --id4=string    Identifier for the fourth column (see -i).
+   -j, --c2=string    Identifier for the second column (see -i).
+   -k, --c3=string    Identifier for the third column (see -i).
+   -l, --c4=string    Identifier for the fourth column (see -i).
+   --c5=string        Identifier for the fifth column (see -i).
    -L, --logfile=filename
                        To use a non-default name for the log file.
    -o, --output=filename
@@ -450,6 +492,10 @@ Usage: aljamia.py -x[xml file] -i[fold field] [-j[weight field] -k[id string], .
                        To set the position of row with headers (default is 1).
    -t, --table=number  To select fields from a table different than QuiXML's
                        peptide_match (which corresponds to the default, 3).
+   -w, --word-operators
+                       To use *and* and *or* (including asterisks) as logical
+                       operators instead of the default && and || in filters
+                       (see options -f and -F).
    -x, --input=filename, --filename=filename
                        Input xml or txt (tsv) file.
 """ % version
@@ -463,12 +509,15 @@ def getDataFromTXT(fileName,
 					jField,
 					kField,
 					lField,
+					c5Field,
 					initialRow = 1,
 					filterString = "",
 					removeDuplicates = True,
 					removeCommas = True,
 					allowOperationsInFields = "",
-					useNumbers = False):
+					useNumbers = False,
+					logicOperatorsAsWords = False,
+					curlyBrackets = False):
 	
 	result = []
 	thisHeader = ""
@@ -493,7 +542,7 @@ def getDataFromTXT(fileName,
 					thisHeader = thisRow
 			else:
 				# check for fields
-				filterOk = checkFilter(filterString, isXML = False, currentRow = thisRow, headers = thisHeader, useNumbers = useNumbers)
+				filterOk = checkFilter(filterString, isXML = False, currentRow = thisRow, headers = thisHeader, useNumbers = useNumbers, logicOperatorsAsWords = logicOperatorsAsWords, curlyBrackets = curlyBrackets)
 			
 				if filterOk:
 					
@@ -519,6 +568,11 @@ def getDataFromTXT(fileName,
 						lValue = replaceValuesTXT(thisRow, thisHeader, lField, allowOperations)
 						dataRow.append(lValue)
 						
+					if len(c5Field) > 0:
+						allowOperations = ("c5" in allowOperationsInFields)
+						c5Value = replaceValuesTXT(thisRow, thisHeader, c5Field, allowOperations)
+						dataRow.append(c5Value)
+						
 					result.append(dataRow)
 		
 		currentRowNumber += 1
@@ -535,10 +589,13 @@ def getDataFromXML(xmlDocument,
 					jField,
 					kField,
 					lField,
+					c5Field,
 					tableId = 0,
 					filterString = "",
 					removeDuplicates = True,
-					useNumbers = False):
+					useNumbers = False,
+					logicOperatorsAsWords = False,
+					curlyBrackets = False):
 
 	result = []
 
@@ -549,7 +606,7 @@ def getDataFromXML(xmlDocument,
 		
 		#pepMatchColumns = pepMatch.childNodes # for deprecated minidom
 		pepMatchColumns = pepMatch.getchildren()
-		filterOk = checkFilter(filterString, columns = pepMatchColumns, useNumbers = useNumbers)
+		filterOk = checkFilter(filterString, columns = pepMatchColumns, useNumbers = useNumbers, logicOperatorsAsWords = logicOperatorsAsWords, curlyBrackets = curlyBrackets)
 		
 		if filterOk:
 			
@@ -570,6 +627,10 @@ def getDataFromXML(xmlDocument,
 			if len(lField) > 0:
 				lValue = replaceValuesXML(pepMatchColumns, lField)
 				dataRow.append(lValue)
+
+			if len(c5Field) > 0:
+				c5Value = replaceValuesXML(pepMatchColumns, c5Field)
+				dataRow.append(c5Value)
 
 			result.append(dataRow)
 			
@@ -641,17 +702,19 @@ def replaceValuesXML(columns, field):
 
 #------------------------------------------------------
 
-def findErrors(xmlDocument, tableId, iField, jField, kField, lField):
+def findErrors(xmlDocument, tableId, iField, jField, kField, lField, c5Field):
 
 	errors = []
 	tagList = getNodesFromXML(xmlDocument, tableId)
 	
+	if len(c5Field) > 0 and len(lField) == 0:
+		errors.append("Error: c4 field cannot be empty if you are using c5. Please use -l command.")
 	if len(lField) > 0 and len(kField) == 0:
-		errors.append("Error: id3 field cannot be empty if you are using id4. Please use -k command.")
+		errors.append("Error: c3 field cannot be empty if you are using c4. Please use -k command.")
 	if len(kField) > 0 and len(jField) == 0:
-		errors.append("Error: id2 field cannot be empty if you are using id3. Please use -k command.")
+		errors.append("Error: c2 field cannot be empty if you are using c3. Please use -j command.")
 	if len(iField) == 0:
-		errors.append("Error: id1 field cannot be empty. Please use -i command.")
+		errors.append("Error: c1 field cannot be empty. Please use -i command.")
 
 	return errors
 
@@ -659,21 +722,24 @@ def findErrors(xmlDocument, tableId, iField, jField, kField, lField):
 
 def main(argv):
 
-	version = "v1.11"
+	version = "v1.16"
 	fileName = ""
 	outFile = ""
 	iField = ""
 	jField = ""
 	kField = ""
 	lField = ""
+	c5Field = ""
 	analysisName = ""
 	filterString = ""
 	useNumbers = False
+	logicOperatorsAsWords = False # False = Python-style operators (&&, ||), True = word-like operators (\and\ \or\)
+	curlyBrackets = False # False = normal brackets (), True = curly brackets {}
 	analysisFolder = ""
 	defaultFileName = "QuiXML"
 	defaultOutputFile = "table"
 	defaultOutputLog = "log"
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	defaultGraphExtension = ".png"
 	defaultXMLExtension = ".xml"
@@ -686,7 +752,7 @@ def main(argv):
 	logList = [["Aljamia " + version], ["Start: " + strftime("%Y-%m-%d %H:%M:%S")]]
 	
 	try:
-		opts, args = getopt.getopt(argv, "a:p:x:o:i:j:k:l:t:R:L:f:F:A:dh", ["input=", "filename=", "place=", "folder=", "outfile=", "id1=", "id2=", "id3=", "id4=", "table=", "initialrow=", "logfile=", "filter=", "allow-operations=", "allow-duplicates", "help", "egg", "easteregg"])
+		opts, args = getopt.getopt(argv, "a:p:x:o:i:j:k:l:t:R:L:f:F:A:cdwh", ["input=", "filename=", "place=", "folder=", "outfile=", "c1=", "c2=", "c3=", "c4=", "c5=", "table=", "initialrow=", "logfile=", "filter=", "allow-operations=", "curly-brackets", "allow-duplicates", "word-operators", "help", "egg", "easteregg"])
 	except getopt.GetoptError:
 		logList.append(["Error while getting parameters."])
 		stats.saveFile(logFile, logList, "LOG FILE")
@@ -705,14 +771,16 @@ def main(argv):
 			fileName = arg
 		if opt in ("-o", "--output"):
 			outFile = arg
-		elif opt in ("-i", "--id1"):
+		elif opt in ("-i", "--c1"):
 			iField = arg.strip()
-		elif opt in ("-j", "--id2"):
+		elif opt in ("-j", "--c2"):
 			jField = arg.strip()
-		elif opt in ("-k", "--id3"):
+		elif opt in ("-k", "--c3"):
 			kField = arg.strip()
-		elif opt in ("-l", "--id4"):
+		elif opt in ("-l", "--c4"):
 			lField = arg.strip()
+		elif opt in ("--c5"):
+			c5Field = arg.strip()
 		elif opt in ("-t", "--table"):
 			tableId = int(arg) # *** check this: int or string?
 		elif opt in ("-R", "--initialrow"):
@@ -725,10 +793,14 @@ def main(argv):
 		elif opt in ("-F", "--filter-using-numbers"):
 			filterString = arg
 			useNumbers = True
-		elif opt in ("-d", "--allow-duplicates"):
-			removeDuplicates = False
 		elif opt in ("-A", "--allow-operations"):
 			allowOperationsInFields = str(arg).strip()
+		elif opt in ("-d", "--allow-duplicates"):
+			removeDuplicates = False
+		elif opt in ("-c", "--curly-brackets"):
+			curlyBrackets = True
+		elif opt in ("-w", "--word-operators"):
+			logicOperatorsAsWords = True
 		elif opt in ("-h", "--help"):
 			printHelp(version)
 			sys.exit()
@@ -797,10 +869,33 @@ def main(argv):
 			stats.saveFile(logFile, logList, "LOG FILE")
 			sys.exit(2)
 		
-		resultingData = getDataFromXML(xmlDocument, iField, jField, kField, lField, tableId = tableId, filterString = filterString, removeDuplicates = removeDuplicates, useNumbers = useNumbers)
+		resultingData = getDataFromXML(xmlDocument,
+										Field,
+										jField,
+										kField,
+										lField,
+										c5Field,
+										tableId = tableId,
+										filterString = filterString,
+										removeDuplicates = removeDuplicates,
+										useNumbers = useNumbers,
+										logicOperatorsAsWords = logicOperatorsAsWords,
+										curlyBrackets = curlyBrackets)
 		
 	else: # then it should be a tsv
-		resultingData = getDataFromTXT(fileName, iField, jField, kField, lField, filterString = filterString, removeDuplicates = removeDuplicates, initialRow = initialRow, allowOperationsInFields = allowOperationsInFields, useNumbers = useNumbers)
+		resultingData = getDataFromTXT(fileName,
+										iField,
+										jField,
+										kField,
+										lField,
+										c5Field,
+										filterString = filterString,
+										removeDuplicates = removeDuplicates,
+										initialRow = initialRow,
+										allowOperationsInFields = allowOperationsInFields,
+										useNumbers = useNumbers,
+										logicOperatorsAsWords = logicOperatorsAsWords,
+										curlyBrackets = curlyBrackets)
 	
 	iTab = ""
 	if len(iField) > 0: iTab = "%s\t" % iField
@@ -810,8 +905,10 @@ def main(argv):
 	if len(kField) > 0: kTab = "%s\t" % kField
 	lTab = ""
 	if len(lField) > 0: lTab = "%s\t" % lField
+	c5Tab = ""
+	if len(c5Field) > 0: c5Tab = "%s\t" % c5Field
 	
-	header = iTab + jTab + kTab + lTab
+	header = iTab + jTab + kTab + lTab + c5Tab
 	header = header[:len(header) - 1]
 	
 	stats.saveFile(outFile, resultingData, header)

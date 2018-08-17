@@ -314,12 +314,13 @@ def createDOTGraph(simMatrix = None,
 			print """
 Warning: no information included for Pareto front calculation.
 """
-	
-	DOTIniPath = stats.joinLocationAndFile(os.path.dirname(os.path.realpath(sys.argv[0])), "dot.ini")
-	DOTProgramLocationCheck = stats.getFromIni(DOTIniPath, "dotlocation")
-	
-	if len(DOTProgramLocationCheck) > 0: DOTProgramLocation = DOTProgramLocationCheck
-	DOTProgram = stats.joinLocationAndFile(DOTProgramLocation, "dot.exe")
+	DOTProgram = "dot"
+	if "win" in sys.platform:
+		DOTIniPath = stats.joinLocationAndFile(os.path.dirname(os.path.realpath(sys.argv[0])), "dot.ini")
+		DOTProgramLocationCheck = stats.getFromIni(DOTIniPath, "dotlocation")
+		
+		if len(DOTProgramLocationCheck) > 0: DOTProgramLocation = DOTProgramLocationCheck
+		DOTProgram = stats.joinLocationAndFile(DOTProgramLocation, "dot.exe")
 	
 	GVFileText = createGVFileText(simMatrix = simMatrix,
 									simLimit = simLimit,
@@ -341,21 +342,39 @@ Warning: no information included for Pareto front calculation.
 	
 	stats.saveTextFile(outputGVFile, GVFileText)
 	
-	DOTCommandLine = """"%s" -Gdpi=%f -Gratio=%f -T%s "%s" -o"%s\"""" % (DOTProgram, graphDPI, graphRatio, graphFileFormat, outputGVFile, simGraphFile)
+	if "win" in sys.platform:
+		DOTCommandLine = """"%s" -Gdpi=%f -Gratio=%f -T%s "%s" -o"%s\"""" % (DOTProgram, graphDPI, graphRatio, graphFileFormat, outputGVFile, simGraphFile)
+	else:
+		DOTCommandLine = "%s -Gdpi=%f -Gratio=%f -T%s %s -o%s" % (DOTProgram, graphDPI, graphRatio, graphFileFormat, outputGVFile, simGraphFile)
+	print DOTCommandLine
 	
 	try:
-		subprocess.call(DOTCommandLine)
+		if "win" in sys.platform:
+			subprocess.call(DOTCommandLine)
+		else:
+			subprocess.call(DOTCommandLine, shell=True)
 	except:
-		print """
-*** ERROR ***
-The graph could not be generated, because the dot.exe program could not be
-found. Please, check:
+		if "win" in sys.platform:
+			print """
+	*** ERROR ***
+	The graph could not be generated, because the dot.exe program could not be
+	found. Please, check:
 
-   1) that you have installed Graphviz,
-      which is freely available at http://www.graphviz.org/
-   2) that you have included the path of the program folder in the dot.ini
-      file (which should be in the same folder as this program)
-"""
+	   1) that you have installed Graphviz,
+		  which is freely available at http://www.graphviz.org/
+	   2) that you have included the path of the program folder in the dot.ini
+		  file (which should be in the same folder as this program)
+	"""
+		else:
+			print """
+	*** ERROR ***
+	The graph could not be generated, because the dot program could not be
+	found. Please, check:
+
+	   1) that you have installed Graphviz,
+		  which is freely available at http://www.graphviz.org/
+	   2) that the dot program is available from the shell.
+	"""
 	
 	return
 	
@@ -872,7 +891,7 @@ Usage: sanson.py -z[stats file] -r[relations file] -c[higher level list file] [O
 
 def main(argv):
 
-	version = "v1.11"
+	version = "v1.13"
 	verbose = False
 	similarityLimit = -1.0 # if remain as -1, it will be calculated
 	graphLimits = 6.0
@@ -884,7 +903,7 @@ def main(argv):
 	inStats = ""
 	defaultStatsFile = "stats"
 	defaultRelationsFile = "rels"
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	defaultDOTExtension = ".gv"
 	relationsFile = ""
@@ -1055,7 +1074,7 @@ def main(argv):
 		outCluster = os.path.join(analysisFolder, analysisName + "_" + defaultOutputClusterFileName + defaultTableExtension)
 	
 	if len(similarityMatrixFile) == 0:
-		similarityMatrixFile = os.path.join(analysisFolder, analysisName + "_" + defaultSimilarityMatrixFile + defaultTableExtension)
+		similarityMatrixFile = os.path.join(analysisFolder, analysisName + "_" + defaultSimilarityMatrixFile + defaultTextExtension)
 		
 	if len(logFile) == 0:
 		logFile = os.path.join(analysisFolder, analysisName + "_" + defaultLogFile + defaultTextExtension)

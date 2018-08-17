@@ -144,7 +144,8 @@ def integrate(data = None,
 				emergencySweep = False,
 				sweepDecimals = 3,
 				includeOrphans = False,
-				tags = ""):
+				tags = "",
+				logicOperatorsAsWords = False):
 
 	logResults = []
 	outStats = []
@@ -184,7 +185,7 @@ def integrate(data = None,
 					stats.saveFile(confluencedFileName, relations, "idsup\tidinf")
 	
 	if len(tags) > 0:
-		filteredRelations, relationsExcluded = stats.filterRelations(relations, tags)
+		filteredRelations, relationsExcluded = stats.filterRelations(relations, tags, logicOperatorsAsWords)
 	else:
 		filteredRelations = relations
 		relationsExcluded = []
@@ -771,7 +772,8 @@ def getVarConf(variance,
 				maxIterations = 0,
 				removeDuplicateUpper = False,
 				acceptedError = 0.001,
-				tags = ""):
+				tags = "",
+				logicOperatorsAsWords = False):
 
 	# fix this, so it is loaded once only
 	data = stats.loadInputDataFile(dataFile)
@@ -800,7 +802,8 @@ def getVarConf(variance,
 								acceptedError = acceptedError,
 								minVarianceSeed = minVarianceSeed,
 								removeDuplicateUpper = removeDuplicateUpper,
-								tags = tags)
+								tags = tags,
+								logicOperatorsAsWords = logicOperatorsAsWords)
 		print "New variance: %f" % newVariance
 		print
 		
@@ -1055,7 +1058,7 @@ Use -H or --advanced-help for more details."""
 def main(argv):
 
 	# general
-	version = "v2.13"
+	version = "v2.17"
 	
 	# filename options
 	analysisName = ""
@@ -1071,6 +1074,7 @@ def main(argv):
 	varFile = ""
 	outputRandomisedFile = ""
 	outputConfluencedFile = ""
+	logicOperatorsAsWords = False
 	
 	# filename options - default filenames
 	defaultAnalysisName = "sanxot"
@@ -1086,7 +1090,7 @@ def main(argv):
 	defaultOutputConfluencedFile = "outConfluRels"
 	
 	# filename options - file extensions
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	defaultGraphExtension = ".png"
 	
@@ -1133,7 +1137,7 @@ def main(argv):
 	logList = [["SanXoT " + version], ["Start: " + strftime("%Y-%m-%d %H:%M:%S")]]
 	
 	try:
-		opts, args = getopt.getopt(argv, "a:p:v:d:r:o:u:z:m:M:l:L:G:V:A:B:w:y:t:W:Z:bgsfFRCDTJhH", ["analysis=", "folder=", "varianceseed=", "datafile=", "relfile=", "higherlevel=", "lowernormw=", "lowernormv=", "outstats=", "maxiterations=", "minseed=", "graphlimits=", "infofile=", "outgraph=", "outrandom=", "outconfluence=", "varconf=", "varconfpercent=", "graphtitle=", "graphlinewidth=", "labelfontsize=", "varfile=", "no-verbose", "no-graph", "no-steps", "forceparameters", "forcenegativevariance", "emergencyvariance", "emergencysweep", "sweepdecimals=", "randomise", "confluence", "removeduplicateupper", "help", "advanced-help", "minimalgraphticks", "includeorphans" , "randomtimer", "randomseed=", "xlabel=", "ylabel=", "tags="])
+		opts, args = getopt.getopt(argv, "a:p:v:d:r:o:u:z:m:M:l:L:G:V:A:B:w:y:t:W:Z:bgsfFRCDTJhH", ["analysis=", "folder=", "varianceseed=", "datafile=", "relfile=", "higherlevel=", "lowernormw=", "lowernormv=", "outstats=", "maxiterations=", "minseed=", "graphlimits=", "infofile=", "outgraph=", "outrandom=", "outconfluence=", "varconf=", "varconfpercent=", "graphtitle=", "graphlinewidth=", "labelfontsize=", "varfile=", "no-verbose", "no-graph", "no-steps", "forceparameters", "forcenegativevariance", "emergencyvariance", "emergencysweep", "sweepdecimals=", "randomise", "confluence", "removeduplicateupper", "help", "advanced-help", "minimalgraphticks", "includeorphans" , "randomtimer", "randomseed=", "xlabel=", "ylabel=", "tags=", "word-operators"])
 	except getopt.GetoptError:
 		logList.append(["Error while getting parameters."])
 		stats.saveFile(infoFile, logList, "INFO FILE")
@@ -1226,6 +1230,8 @@ def main(argv):
 			yLabel = arg
 		elif opt in ("--tags"):
 			tags = arg
+		elif opt in ("--word-operators"):
+			logicOperatorsAsWords = True
 		elif opt in ("-h", "--help"):
 			printHelp(version)
 			sys.exit()
@@ -1335,6 +1341,7 @@ def main(argv):
 	logList.append(["Max iterations: " + str(maxIterations)])
 	logList.append(["Removing duplicate higher level elements: " + str(removeDuplicateUpper)])
 	logList.append(["Tags to filter relations: " + tags])
+	logList.append(["Tag operators as words: " + str(logicOperatorsAsWords)])
 	logList.append(["Include orphans: " + str(includeOrphans)])
 	logList.append(["Random seed using timer: " + str(randomTimer)])
 	logList.append(["Random seed used (abs(hash(randomseed))): " + str(randomSeedUsed)])
@@ -1382,7 +1389,8 @@ def main(argv):
 							emergencySweep = emergencySweep,
 							sweepDecimals = sweepDecimals,
 							includeOrphans = includeOrphans,
-							tags = tags)
+							tags = tags,
+							logicOperatorsAsWords = logicOperatorsAsWords)
 	if logResults: logList.extend(logResults)
 
 	higherTable = []
@@ -1437,7 +1445,7 @@ def main(argv):
 			print
 			print "Calculating confidence limits of variance..."
 			
-		varMedian, varLower, varUpper = getVarConf(variance, dataFile, relationsFile, totSimulations, varConfLimit, tags = tags)
+		varMedian, varLower, varUpper = getVarConf(variance, dataFile, relationsFile, totSimulations, varConfLimit, tags = tags, logicOperatorsAsWords = logicOperatorsAsWords)
 		# very important, do not include the word "Variance" here
 		# as this would compromise the -V parametre of other programs
 		
@@ -1453,12 +1461,14 @@ def main(argv):
 	
 	if showGraph or graphFile:
 		ZijList = []
+		FDRijList = []
 		for element in outStats:
 			ZijList.append(element.Zij)
+			FDRijList.append(element.FDRij)
 		
 		# this is a trick to remove "not a number" element fast
 		for i in xrange(len(ZijList)):
-			if str(ZijList[i]).lower() == "nan" or str(ZijList[i]).lower() == "excluded":
+			if str(FDRijList[i]).lower() == "nan" or str(FDRijList[i]).lower() == "excluded":
 				ZijList[i] = sys.float_info.max
 				
 		ZijList = sorted(ZijList)

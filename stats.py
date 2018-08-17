@@ -15,7 +15,7 @@ import math
 #######################################################
 
 def version():
-	return "v0.56"
+	return "v0.58"
 
 #------------------------------------------------------
 
@@ -972,13 +972,15 @@ def stringList2inputDataFile(input, format = ['s', 'f', 'f'], fillEmptyPositions
 						if format[i] == 's':
 							resultRow.append(stringy)
 						elif format[i] == 'f' or format[i] == 'i':
-							if (stringy[0] >= '0' and stringy[0] <= '9') or \
-								(stringy[0] == '-' and (stringy[1] >= '0' and stringy[1] <= '9')):
+							if len(stringy) > 0 and \
+								((stringy[0] >= '0' and stringy[0] <= '9') or \
+								(stringy[0] == '-' and (stringy[1] >= '0' and stringy[1] <= '9'))):
 								if format[i] == 'f': resultRow.append(float(stringy))
 								if format[i] == 'i': resultRow.append(int(stringy))
 							else:
-								# if there is an error while reading a row with the specified format,
-								# the row is not read but it keeps going
+								# if a row that is supposed to contain a float or an int
+								# is empty, or there is an error while reading it,
+								# the row is not read but the program keeps going
 								resultRow = []
 								break
 			
@@ -1615,7 +1617,7 @@ def extractColumns(list, n1, n2 = -1, n3 = -1, n4 = -1):
 
 #------------------------------------------------------
 
-def filterRelations(relations = [], tags = ""):
+def filterRelations(relations = [], tags = "", logicOperatorsAsWords = False):
 	
 	relationsAccepted = []
 	relationsExcluded = []
@@ -1627,7 +1629,7 @@ def filterRelations(relations = [], tags = ""):
 		# fix to make it faster by sorting first
 		tagsInFile = ""
 		if len(relation) > 2: tagsInFile = relation[2].strip()
-		if tagFound(tags, tagsInFile):
+		if tagFound(tags, tagsInFile, logicOperatorsAsWords = logicOperatorsAsWords):
 			relationsAccepted.append(relation)
 		else:
 			relationsExcluded.append(relation)
@@ -1665,10 +1667,13 @@ def tagFound_old(tagCondition = "", tagInRow = ""):
 
 #------------------------------------------------------
 
-def tagFound(tagCondition = "", tagInRow = "", tagList = []):
+def tagFound(tagCondition = "", tagInRow = "", tagList = [], logicOperatorsAsWords = False):
 
 	tagCondition = tagCondition.strip()
 	tagInRow = tagInRow.strip()
+	
+	alternativeAnd = "*and*"
+	alternativeOr = "*or*"
 	
 	if tagCondition == "False": return False
 	if tagCondition == "True": return True
@@ -1687,8 +1692,8 @@ def tagFound(tagCondition = "", tagInRow = "", tagList = []):
 		if "(" in subConditionFirst:
 			startPos = len(subConditionFirst) - subConditionFirst[::-1].find("(")
 			subCondition = tagCondition[startPos:endPos]
-			newTagCondition = tagCondition[:startPos-1].strip() + str(tagFound(subCondition, tagList = tagList)) + tagCondition[endPos+1:].strip()
-			return tagFound(newTagCondition, tagList = tagList)
+			newTagCondition = tagCondition[:startPos-1].strip() + str(tagFound(subCondition, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords)) + tagCondition[endPos+1:].strip()
+			return tagFound(newTagCondition, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords)
 		else:
 			print "Wrong parentheses"
 			return False
@@ -1697,17 +1702,29 @@ def tagFound(tagCondition = "", tagInRow = "", tagList = []):
 		andPos = tagCondition.find("&")
 		firstPart = tagCondition[:andPos]
 		lastPart = tagCondition[andPos + 1:]
-		return tagFound(firstPart, tagList = tagList) and tagFound(lastPart, tagList = tagList)
+		return tagFound(firstPart, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords) and tagFound(lastPart, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords)
+			
+	if logicOperatorsAsWords and alternativeAnd in tagCondition:
+		andPos = tagCondition.find(alternativeAnd)
+		firstPart = tagCondition[:andPos]
+		lastPart = tagCondition[andPos + len(alternativeAnd):]
+		return tagFound(firstPart, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords) and tagFound(lastPart, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords)
 	
 	if "|" in tagCondition:
 		orPos = tagCondition.find("|")
 		firstPart = tagCondition[:orPos]
 		lastPart = tagCondition[orPos + 1:]
-		return tagFound(firstPart, tagList = tagList) or tagFound(lastPart, tagList = tagList)
+		return tagFound(firstPart, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords) or tagFound(lastPart, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords)
+	
+	if logicOperatorsAsWords and alternativeOr in tagCondition:
+		orPos = tagCondition.find(alternativeOr)
+		firstPart = tagCondition[:orPos]
+		lastPart = tagCondition[orPos + len(alternativeOr):]
+		return tagFound(firstPart, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords) or tagFound(lastPart, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords)
 	
 	if tagCondition.startswith("!"):
 		restOfCondition = tagCondition[1:].strip()
-		return not tagFound(restOfCondition, tagList = tagList)
+		return not tagFound(restOfCondition, tagList = tagList, logicOperatorsAsWords = logicOperatorsAsWords)
 	
 	return (tagCondition in tagList)
 	

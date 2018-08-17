@@ -134,7 +134,7 @@ Usage: sanxotsqueezer.py -l[lower level stats file] -u[upper level stats file] [
 
 def main(argv):
 
-	version = "v0.13"
+	version = "v0.14"
 	verbose = False
 	analysisName = ""
 	defaultAnalysisName = "squeeze"
@@ -150,7 +150,7 @@ def main(argv):
 	higherStats = ""
 	defaultLowerStatsFile = "lower"
 	defaultHigherStatsFile = "upper"
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	defaultGraphExtension = ".png"
 	defaultOutputFile = "outList"

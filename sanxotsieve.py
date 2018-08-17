@@ -187,7 +187,7 @@ def getRelationsWithoutOutliers(data, relations, variance, FDRLimit = 0.01, mode
 
 #------------------------------------------------------
 
-def tagRelationsWithoutOutliers(data, relations, variance, FDRLimit = 0.01, modeUsed = mode.onlyOne, removeDuplicateUpper = False, tags = "!out", outlierTag = "out"):
+def tagRelationsWithoutOutliers(data, relations, variance, FDRLimit = 0.01, modeUsed = mode.onlyOne, removeDuplicateUpper = False, tags = "!out", outlierTag = "out", logicOperatorsAsWords = False):
 
 	newRelations = relations[:]
 	
@@ -207,7 +207,8 @@ def tagRelationsWithoutOutliers(data, relations, variance, FDRLimit = 0.01, mode
 								varianceSeed = variance,
 								forceParameters = True,
 								removeDuplicateUpper = removeDuplicateUpper,
-								tags = tags)
+								tags = tags,
+								logicOperatorsAsWords = logicOperatorsAsWords)
 		
 		totOutliers = detectOutliers(newStats, FDRLimit = FDRLimit)
 		outliers = detectRelationWithLeastFDR(newStats, FDRLimit = FDRLimit, modeUsed = modeUsed)
@@ -329,7 +330,7 @@ Use -H or --advanced-help for more details."""
 
 def main(argv):
 	
-	version = "v0.15"
+	version = "v0.17"
 	analysisName = ""
 	analysisFolder = ""
 	varianceSeed = 0.001
@@ -338,6 +339,7 @@ def main(argv):
 	removeDuplicateUpper = False
 	tags = "!out"
 	outlierTag = "out"
+	logicOperatorsAsWords = False
 	dataFile = ""
 	relationsFile = ""
 	newRelFile = ""
@@ -350,7 +352,7 @@ def main(argv):
 	defaultOutputInfo = "infoFile"
 	infoFile = ""
 	varFile = ""
-	defaultTableExtension = ".xls"
+	defaultTableExtension = ".tsv"
 	defaultTextExtension = ".txt"
 	defaultGraphExtension = ".png"
 	verbose = True
@@ -359,7 +361,7 @@ def main(argv):
 	logList = [["SanXoTSieve " + version], ["Start: " + strftime("%Y-%m-%d %H:%M:%S")]]
 
 	try:
-		opts, args = getopt.getopt(argv, "a:p:v:d:r:n:L:V:f:ubDhH", ["analysis=", "folder=", "varianceseed=", "datafile=", "relfile=", "newrelfile=", "outlierrelfile=", "infofile=", "varfile=", "fdrlimit=", "one-to-one", "no-verbose", "randomise", "removeduplicateupper", "help", "advanced-help", "tags=", "outliertag=", "oldway"])
+		opts, args = getopt.getopt(argv, "a:p:v:d:r:n:L:V:f:ubDhH", ["analysis=", "folder=", "varianceseed=", "datafile=", "relfile=", "newrelfile=", "outlierrelfile=", "infofile=", "varfile=", "fdrlimit=", "one-to-one", "no-verbose", "randomise", "removeduplicateupper", "help", "advanced-help", "tags=", "outliertag=", "oldway", "word-operators"])
 	except getopt.GetoptError:
 		logList.append(["Error while getting parameters."])
 		stats.saveFile(infoFile, logList, "INFO FILE")
@@ -400,6 +402,8 @@ def main(argv):
 		elif opt in ("--tags"):
 			if arg.strip().lower() != "!out":
 				tags = "!out&(" + arg + ")"
+		elif opt in ("--word-operators"):
+			logicOperatorsAsWords = True
 		elif opt in ("--outliertag"):
 			outlierTag = "out"
 		elif opt in ("-h", "--help"):
@@ -508,7 +512,8 @@ def main(argv):
 										modeUsed = modeUsed,
 										removeDuplicateUpper = removeDuplicateUpper,
 										tags = tags,
-										outlierTag = outlierTag)
+										outlierTag = outlierTag,
+										logicOperatorsAsWords = logicOperatorsAsWords)
 		
 	if oldWay:
 		stats.saveFile(newRelFile, newRelations, "idsup\tidinf")
