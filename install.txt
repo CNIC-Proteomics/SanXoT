@@ -1,0 +1,16 @@
+To make the programs work, you have to install the following programs/libraries:
+
+* install Python http://www.python.org/download/
+* install SciPy http://www.scipy.org/Download
+* install NumPy (same website, redirect to  http://sourceforge.net/projects/numpy/files/)
+* install matplotlib, which includes pylab, from here http://matplotlib.sourceforge.net/users/installing.html (with link to http://sourceforge.net/projects/matplotlib/files/latest/download?source=files)
+* install lxml (only needed if you want to use xml2SanXoTData), from here: http://www.lfd.uci.edu/~gohlke/pythonlibs/#lxml clicking on lxml-2.3.6.win32-py2.7.exe
+
+Other notes:
+
+* leastsq code (wrapper for Levenberg-Marquardt): https://github.com/scipy/scipy/blob/master/scipy/optimize/minpack.py#L247
+* the core code is written in python, and compiled into a _minpack.pyd library. The original code in fortran is here, within files lmder.f and lmdir.f : http://www.netlib.org/minpack/
+
+For SanXoTViewer
+* download pandas for merging tables http://pandas.pydata.org/getpandas.html
+	* remember it must use a proper version of numpy, such as https://pypi.python.org/pypi/pandas/0.10.0/#downloads

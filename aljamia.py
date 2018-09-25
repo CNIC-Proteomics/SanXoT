@@ -488,6 +488,9 @@ Usage: aljamia.py -x[xml file] -i[fold field] [-j[weight field] -k[id string], .
                        To use a different common folder for the output files.
                        If this is not provided, the the folder used will be the
                        same as the input folder.
+   -s, --inputseparator
+                       To use a different column separator character (default is
+                       tabulator)
    -R, --initialrow=integer
                        To set the position of row with headers (default is 1).
    -t, --table=number  To select fields from a table different than QuiXML's
@@ -517,7 +520,8 @@ def getDataFromTXT(fileName,
 					allowOperationsInFields = "",
 					useNumbers = False,
 					logicOperatorsAsWords = False,
-					curlyBrackets = False):
+					curlyBrackets = False,
+					inputSeparator = "\t"):
 	
 	result = []
 	thisHeader = ""
@@ -528,7 +532,7 @@ def getDataFromTXT(fileName,
 	for myRow in reader:
 	
 		if currentRowNumber >= initialRow:
-			thisRow = myRow.strip().split("\t")
+			thisRow = myRow.strip().split(inputSeparator)
 			if removeCommas:
 				for i in xrange(len(thisRow)):
 					if thisRow[i].endswith('"') and thisRow[i].startswith('"'):
@@ -722,7 +726,7 @@ def findErrors(xmlDocument, tableId, iField, jField, kField, lField, c5Field):
 
 def main(argv):
 
-	version = "v1.16"
+	version = "v1.17"
 	fileName = ""
 	outFile = ""
 	iField = ""
@@ -732,6 +736,7 @@ def main(argv):
 	c5Field = ""
 	analysisName = ""
 	filterString = ""
+	inputSeparator = "\t"
 	useNumbers = False
 	logicOperatorsAsWords = False # False = Python-style operators (&&, ||), True = word-like operators (\and\ \or\)
 	curlyBrackets = False # False = normal brackets (), True = curly brackets {}
@@ -752,7 +757,7 @@ def main(argv):
 	logList = [["Aljamia " + version], ["Start: " + strftime("%Y-%m-%d %H:%M:%S")]]
 	
 	try:
-		opts, args = getopt.getopt(argv, "a:p:x:o:i:j:k:l:t:R:L:f:F:A:cdwh", ["input=", "filename=", "place=", "folder=", "outfile=", "c1=", "c2=", "c3=", "c4=", "c5=", "table=", "initialrow=", "logfile=", "filter=", "allow-operations=", "curly-brackets", "allow-duplicates", "word-operators", "help", "egg", "easteregg"])
+		opts, args = getopt.getopt(argv, "a:p:x:o:i:j:k:l:t:R:L:f:F:A:cdwh", ["input=", "filename=", "place=", "folder=", "outfile=", "c1=", "c2=", "c3=", "c4=", "c5=", "table=", "initialrow=", "logfile=", "filter=", "allow-operations=", "curly-brackets", "allow-duplicates", "word-operators", "inputseparator", "help", "egg", "easteregg"])
 	except getopt.GetoptError:
 		logList.append(["Error while getting parameters."])
 		stats.saveFile(logFile, logList, "LOG FILE")
@@ -801,6 +806,8 @@ def main(argv):
 			curlyBrackets = True
 		elif opt in ("-w", "--word-operators"):
 			logicOperatorsAsWords = True
+		elif opt in ("-s", "--inputseparator"):
+			inputSeparator = str(arg)[0]
 		elif opt in ("-h", "--help"):
 			printHelp(version)
 			sys.exit()
@@ -895,7 +902,8 @@ def main(argv):
 										allowOperationsInFields = allowOperationsInFields,
 										useNumbers = useNumbers,
 										logicOperatorsAsWords = logicOperatorsAsWords,
-										curlyBrackets = curlyBrackets)
+										curlyBrackets = curlyBrackets,
+										inputSeparator = inputSeparator)
 	
 	iTab = ""
 	if len(iField) > 0: iTab = "%s\t" % iField

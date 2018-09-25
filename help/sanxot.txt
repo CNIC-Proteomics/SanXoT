@@ -1,0 +1,195 @@
+
+SanXoT v2.07 is a program made in the Jesus Vazquez Cardiovascular Proteomics
+Lab at Centro Nacional de Investigaciones Cardiovasculares, used to perform
+integration of experimental data to a higher level (such as integration from
+peptide data to protein data), while determining the variance between them.
+
+SanXoT needs two input files:
+
+     * the lower level input data file, a tab separated text file containing
+     three columns: the first one with the unique identifiers of each lower
+     level element (such as "RawFile05.raw-scan19289-charge2" for a scan, or
+     "CGLAGCGLLK" for a peptide sequence, or "P01308" for the Uniprot accession
+     number of a protein), the Xi which corresponds to the log2(A/B), and the
+     Vi which corresponds to the weight of the measure). This data have to be
+     pre-calibrated with a certain weight (see help of the Klibrate program).
+
+     * the relations file, a tab separated text file containing a first column
+     with the higher level identifiers (such as the peptide sequence, a Uniprot
+     accession number, or a Gene Ontology category) and the lower level
+     identifiers within the abovementioned input data file.
+     
+     NOTE: you must include a first line header in all your files.
+
+And delivers six output file:
+
+     * the output data file for the higher level, which has the same format as
+     the lower level data file, but containing the ids of the higher level in
+     the first column, the ratio Xj in the second column, and the weight Vj in
+     the third column. By default, this file is suffixed as "_higherLevel".
+     
+     * two lower level output files, containing three columns each: in both,
+     the first column contains with the identifiers of the lower level, the
+     second column contains the Xinf - Xsup (i.e. the ratios of the lower
+     level, but centered for each element they belong to), and the third column
+     is either the new weight Winf (contanining the variance of the
+     integration) or the former untouched Vinf weight. For example, integrating
+     from scan to peptide, these files would contain firstly the scan
+     identifiers, secondly the Xscan - Xpep (the ratios of each scan compared
+     to the peptide they are identifying) and either Wscan (the weight of the
+     scan, taking into account the variance of the scan distribution) or Vscan.
+     By default, these files are suffixed "_lowerNormW" and "_lowerNormV".
+     
+     * a file useful for statistics, containing all the relations of the higher
+     and lower level element present in the data file, with a copy of their
+     ratios X and weights V, followed by the number of lower elements contained
+     in the upper element (for example, the number of scans that identify the
+     same peptide), the Z (which is the distance in sigmas of the lower level
+     ratio X to the higher level weighted average), and the FDR (the false
+     discovery rate, important to keep track of changes or outliers). By
+     default, this file is suffixed "_outStats".
+     
+     * an info file, containing a log of the performed integrations. Its last
+     line is always in the form of "Variance = [double]". This file can be used
+     as input in place of the variance (see -v and -V arguments). By default,
+     this file is suffixed "_infoFile".
+     
+     * a graph file, depicting the sigmoid of the Z column which appears in the
+     stats file, compared to the theoretical normal distribution. By default,
+     this file is suffixed "_outGraph".
+     
+Usage: sanxot.py -d[data file] -r[relations file] [OPTIONS]
+
+   -h, --help          Display basic help and exit.
+   -H, --advanced-help Display this help and exit.
+   -A, --infofile=filename
+                       To use a non-default name for the randomised relations
+                       file (only applicable when -R is in use).
+   -a, --analysis=string
+                       Use a prefix for the output files. If this is not
+                       provided, then the prefix will be garnered from the data
+                       file.
+   -b, --no-verbose    Do not print result summary after executing.
+   -C, --confluence    A modified version of the relations file is used, where
+                       all the destination higher level elements are "1". If no
+                       relations file is provided, the program gets the lower
+                       level elements from the first column of the data file.
+   -d, --datafile=filename
+                       Data file with identificators of the lowel level in the
+                       first column, measured values (x) in the second column,
+                       and weights (v) in the third column.
+   -D, --removeduplicateupper
+                       When merging data with relations table, remove duplicate
+                       higher level elements (not removed by default).
+   -f, --forceparameters
+                       Use the parameters as provided, without using the
+                       Levenberg-Marquardt algorithm. Negative variances will
+                       be reset to zero (see -F if you do not wish this).
+   -F, --forcenegativevariance
+                       Same effect as -f, but not correcting negative variance
+                       (as using -f, the program will automatically assign
+                       variance = 0 if forced variance is negative).
+   -g, --no-graph      Do not show the Zij vs rank / N graph.
+   -G, --outgraph=filename
+                       To use a non-default name for the graph file.
+   -l, --graphlimits=integer
+                       To set the +- limits of the Zij graph (default is 6). If
+                       you want the limits to be between the minimum and
+                       maximum values, you can use -l.
+   -L, --infofile=filename
+                       To use a non-default name for the info file.
+   -m, --maxiterations=integer
+                       Maximum number of iterations performed by the Levenberg-
+                       Marquardt algorithm to calculate the variance. If
+                       unused, then the default value of the algorithm is
+                       taken.
+   -M, --minseed=float To use a non-default minimum seed. Default is 1e-3.
+   -o, --higherlevel=filename
+                       To use a non-default higher level output file name.
+   -p, --place, --folder=foldername
+                       To use a different common folder for the output files.
+                       If this is not provided, the the folder used will be the
+                       same as the input folder.
+   -r, --relfile, --relationsfile=filename
+                       Relations file, with identificators of the higher level
+                       in the first column, and identificators of the lower
+                       level in the second column.
+   -R, --randomise, --randomize
+                       A modified version of the relations file is used, where
+                       the higher level elements (first column) are replaced by
+                       numbers and randomly written in the first column. The
+                       numbers range from 1 to the total number of elements.
+                       The second column (containing the lowel level elements)
+                       remains unchanged.
+   -s, --no-steps      Do not print result summary and the steps of every
+                       Levenberg-Marquardt iteration.
+   -t, --graphtitle=string
+                       The graph title (default is
+                       "Zij graph for sigma^2 = [variance]").
+   -T, --minimalgraphticks
+                       It will only show the x secondary line for x = 0, and
+                       none for the Y axis (useful for publishing).
+   -u, --lowernormw=filename
+                       To use a non-default lower level output file name,
+                       setting W as weight (default suffix is _lowerNormW).
+   -U, --lowernormv=filename
+                       To use a non-default lower level output file name,
+                       setting V as weight (default suffix is _lowerNormV).
+   -v, --var, --varianceseed=double
+                       Seed used to start calculating the variance.
+                       Default is 0.001.
+   -V, --varfile=filename
+                       Get the variance value from a text file. It must contain
+                       a line (not more than once) with the text
+                       "Variance = [double]". This suits the info file from
+                       another integration (see -L).
+   -W, --graphlinewidth=float
+                       Use a non-default value for the sigmoid line width.
+                       Default is 1.0.
+   -w, --varconf=integer
+                       Get the confidence limits of the variance using n
+                       by performimg n simultaions
+   -y, --varconfpercent=float
+                       Get the higher and lower limits to calculate the limits
+                       of the variance (see -w). Default is 0.05.
+   -z, --outstats=filename
+                       To use a non-default stats file name.
+   --tags=string       To define a tag to distinguish groups to perform the
+                       integration. The tag can be used by inclusion, such as
+                            --tags="mod"
+                       or by exclusion, putting first the "!" symbol, such as
+                            --tags="!out"
+                       Tags should be included in a third column of the
+                       relations file. Note that the tag "!out" for outliers is
+                       implicit.
+                       Different tags can be combined using logical operators
+                       "and" (&), "or" (|), and "not" (!), and parentheses.
+                       Some examples:
+                            --tags="!out&mod"
+                            --tags="!out&(dig0|dig1)"
+                            --tags="(!dig0&!dig1)|mod1"
+                            --tags="mod1|mod2|mod3"
+   --emergencyvariance In the case the maximum iterations are reached (see -m),
+                       force the seed variance as emergency variance.
+   --xlabel=string     Use the selected string for the X label. Default is
+                       "Zij". To remove the label, use --xlabel=" ".
+   --ylabel=string     Use the selected string for the Y label. Default is
+                       "Rank/N". To remove the label, use --ylabel=" ".
+
+examples (use "sanxot.py" if you are not using the standalone version):
+
+* To calculate the variance starting with a seed = 0.02, using a datafile.txt
+and a relationsfile.txt, both in C:\temp:
+
+sanxot -dC:\temp\datafile.txt -rrelationsfile.txt -v0.02
+
+* To get fast results of an integration forcing a variance = 0.02922:
+
+sanxot -dC:\temp\datafile.txt -rrelationsfile.txt -f -v0.02922
+
+* To get an integration forcing the variance reported in the info file at
+C:\data\infofile.txt, and saving the resulting graph in C:\data\ instead
+of C:\temp\:
+
+sanxot -dC:\temp\datafile.txt -rrelationsfile.txt -f -VC:\data\infofile.txt -GC:\data\graphFile.png
+

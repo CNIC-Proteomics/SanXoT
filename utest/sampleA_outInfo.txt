@@ -1,0 +1,30 @@
+INFO FILE
+SanXoT v1.01	
+Start: 2013-03-06 13:27:38	
+Variance seed = 0.00181	
+Input data file: utest\data_cal.xls	
+Input relations file: utest\relations.xls	
+Output higher file: utest\sampleA_outHigher.xls	
+Output lower file: utest\sampleA_outLower.xls	
+Output stats file: utest\sampleA_outStats.xls	
+Output info file: utest\sampleA_outInfo.txt	
+Output graph file: utest\sampleA_outGraph.png	
+Parameters forced: False	
+Max iterations: 0	
+
+Starting Levenberg-Marquardt, showing steps:	
+seed = 0.00181, sigma2 = 1.00051564853	
+seed = 0.00181, sigma2 = 1.00051564853	
+seed = 0.00181, sigma2 = 1.00051564853	
+seed = 0.00181000002697, sigma2 = 1.00051564806	
+seed = 0.00183969905764, sigma2 = 0.998119086954	
+seed = 0.00181296990576, sigma2 = 1.00031034796	
+seed = 0.00181296993278, sigma2 = 1.00031034422	
+seed = 0.00181371481279, sigma2 = 1.00020722973	
+seed = 0.00181371483981, sigma2 = 1.00020722599	
+seed = 0.00181521196855, sigma2 = 1.00000004628	
+seed = 0.0018152119956, sigma2 = 1.00000004254	
+seed = 0.00181521230306, sigma2 = 1.0	
+seed = 0.00181521233011, sigma2 = 0.999999996258	
+seed = 0.00181521230306, sigma2 = 1.0	
+Variance = 0.00181521230306	

@@ -1,0 +1,56 @@
+﻿UNIT TEST FOR KLIBRATE
+
+Command line:
+klibrate.py -gbs -dutest\data.xls -rutest\relations.xls -outest\data_calb.xls -k10 -v0.001
+
+Elapsed time: 3 min
+There should appear a graph showing the rank of the weight compared to the inverse of the fit.
+
+Resulting file utest\data_calb.xls should be identical to utest\id1-x1v1cal.xls
+-------------------------------------------------------------------------------
+*** results ***
+k = 12.2322312218
+variance = 0.00227143562899
+output file saved in utest\data_cal.xls
+-------------------------------------------------------------------------------
+
+*******************************************************************************
+*******************************************************************************
+
+UNIT TEST FOR SANXOT
+
+Command line:
+sanxot.py -putest -asampleB -ddata_cal.xls -rrelations.xls -v0.00181
+
+Elapsed time: 30 sec
+There should appear a graph showing the Zij curve compared to the theoretical one.
+
+Resulting files
+
+utest\sampleB_outHigher.xls,
+utest\sampleB_outLower.xls,
+utest\sampleB_outStats.xls,
+utest\sampleB_outGraph.png,
+utest\sampleB_outInfo.txt
+
+should be identical to their counterparts prefixed as sampleA.
+-------------------------------------------------------------------------------
+*** results ***
+variance = 0.00181521230306
+
+Higher file in: utest\sampleB_outHigher.xls
+Lower file in: utest\sampleB_outLower.xls
+Stats file in: utest\sampleB_outStats.xls
+Graph in: utest\sampleB_outGraph.png
+Info file in: utest\sampleB_outInfo.txt
+-------------------------------------------------------------------------------
+
+*******************************************************************************
+*******************************************************************************
+
+Elapsed times have been measured for a machine with:
+
+Intel(R) Core(TM)2 Quad CPU
+Q8400 @ 2.66GHz
+2.67 GHz, 3.21 GB of RAM
+OS: Windows XP Professional version 2002

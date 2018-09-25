@@ -1,0 +1,50 @@
+usage: catapep.exe [-h] -a ANALYSIS -p PLACE [-L LOGFILE] -d INPUTFILE -M
+                   MSFFILE [-r RAWFILECOL] [-s SCANNUMBERCOL] [-q CHARGECOL]
+                   [-S PEPSEQUENCECOL] [-x XCORRCOL] [-R INITIALROW] [-v] [-Q]
+                   [-O]
+
+cataPep v1.03 is a program made in the Jesus Vazquez Cardiovascular Proteomics
+Lab at Centro Nacional de Investigaciones Cardiovasculares, used to make zero
+the XCorrs of all the PSMs in an MSF file, excluding those provided in a
+list..
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -a ANALYSIS, --analysis ANALYSIS
+                        Use a prefix for the output files.
+  -p PLACE, --place PLACE
+                        To use a different common folder for the output files.
+                        If this is not provided, the the folder used will be
+                        the same as the FASTA file folder.
+  -L LOGFILE, --logfile LOGFILE
+                        To use a non-default name for the log file.
+  -d INPUTFILE, --inputfile INPUTFILE
+                        Name of the text file containing the list of PSMs to
+                        keep in the MSF.
+  -M MSFFILE, --msffile MSFFILE
+                        Name of the MSF file having the PSMs to modify.
+  -r RAWFILECOL, --rawfilecol RAWFILECOL
+                        Header of the column contaning the name of the RAW
+                        files. Default is "RAWFileName".
+  -s SCANNUMBERCOL, --scannumbercol SCANNUMBERCOL
+                        Header of the column containing the scan numbers.
+                        Default is "FirstScan".
+  -q CHARGECOL, --chargecol CHARGECOL
+                        Header of the column containing the charge. Default is
+                        "Charge".
+  -S PEPSEQUENCECOL, --pepsequencecol PEPSEQUENCECOL
+                        Header of the column containing the identified peptide
+                        sequences. Default is "Sequence"
+  -x XCORRCOL, --xcorrcol XCORRCOL
+                        Header of the column containing the XCorr. Default is
+                        "XC1D".
+  -R INITIALROW, --initialrow INITIALROW
+                        The position of the row containing the headers.
+                        Default is 1.
+  -v, --verbose         Show extra info while operating.
+  -Q, --quixml          Use column headers for QuiXML results tab separated
+                        table file (otherwise, pRatio results file headers
+                        will be used by default).
+  -O, --changeoriginalmsf
+                        Do not copy the MSF file to be modified, just remove
+                        bad PSMs in the original file.
