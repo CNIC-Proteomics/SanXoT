@@ -4,6 +4,10 @@ import getopt
 import operator
 import pprint
 import os
+# begin: jmrc
+import matplotlib
+matplotlib.use("agg")
+#end: jmrc
 from numpy import *
 from pylab import *
 from scipy.stats import norm
