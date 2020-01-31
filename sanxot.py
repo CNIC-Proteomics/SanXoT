@@ -703,9 +703,16 @@ def getAverage(chunk, variance1 = 0.0):
 	for statsRes in statsResults:
 		statsRes.Xj = higherElement.Xj
 		statsRes.Vj = higherElement.Vj
-		
-	for element in lowerResults:
-		element.XiXj -= higherElement.Xj # I told you it was going to be fixed
+
+	# begin: jmrc		
+	# for element in lowerResults:
+	# 	element.XiXj -= higherElement.Xj # I told you it was going to be fixed
+	if len(lowerResults) == 1: # disable cases when n=1 with X'=nan
+		lowerResults[0].XiXj = "nan"
+	else:
+		for element in lowerResults:
+			element.XiXj -= higherElement.Xj # I told you it was going to be fixed
+	# end: jmrc
 
 	return statsResults, higherElement, lowerResults
 	
@@ -1058,7 +1065,7 @@ Use -H or --advanced-help for more details."""
 def main(argv):
 
 	# general
-	version = "v2.17"
+	version = "v2.18"
 	
 	# filename options
 	analysisName = ""
@@ -1405,8 +1412,13 @@ def main(argv):
 	lowerWTable = []
 	lowerVTable = []
 	for element in lowerNorm:
-		lowerWTable.append([element.id1, element.XiXj, element.Wij])
-		lowerVTable.append([element.id1, element.XiXj, element.Vi])
+		# begin: jmrc
+		# lowerWTable.append([element.id1, element.XiXj, element.Wij])
+		# lowerVTable.append([element.id1, element.XiXj, element.Vi])
+		if element.XiXj != "nan":
+			lowerWTable.append([element.id1, element.XiXj, element.Wij])
+			lowerVTable.append([element.id1, element.XiXj, element.Vi])
+		# end: jmrc
 		
 	if len(outputHigher) > 0:
 		stats.saveFile(outputHigher, higherTableNoDuplicates, "idsup\tXsup\tVsup")
